@@ -20,10 +20,17 @@ SEVERITY_COLOR = {
 }
 
 SEVERITY_LABEL = {
-    "CRITICAL": "CRITICAL",
-    "HIGH":     "HIGH    ",
-    "MEDIUM":   "MEDIUM  ",
-    "LOW":      "LOW     ",
+    "CRITICAL": "CRÍTICA ",
+    "HIGH":     "ALTA    ",
+    "MEDIUM":   "MEDIA   ",
+    "LOW":      "BAJA    ",
+}
+
+SEVERITY_SUMMARY_LABEL = {
+    "CRITICAL": "CRÍTICA",
+    "HIGH": "ALTA",
+    "MEDIUM": "MEDIA",
+    "LOW": "BAJA",
 }
 
 _USE_COLOR = sys.stdout.isatty()
@@ -66,14 +73,14 @@ def print_report(
 
     print()
     print(_c(bar, BOLD, use_color=uc))
-    print(_c("  PyCodeScan — Security Analysis", BOLD, use_color=uc))
+    print(_c("  PyCodeScan — Análisis de Seguridad", BOLD, use_color=uc))
     print(_c(bar, BOLD, use_color=uc))
-    print(f"  File  : {filepath}")
-    print(f"  Found : {total} issue{'s' if total != 1 else ''}")
+    print(f"  Archivo : {filepath}")
+    print(f"  Hallado : {total} vulnerabilidad{'es' if total != 1 else ''}")
     print(_c("-" * 72, DIM, use_color=uc))
 
     if total == 0:
-        print(_c("  No vulnerabilities detected. Good job!", GREEN, use_color=uc))
+        print(_c("  No se detectaron vulnerabilidades. ¡Buen trabajo!", GREEN, use_color=uc))
         print(_c(bar, BOLD, use_color=uc))
         print()
         return
@@ -85,20 +92,21 @@ def print_report(
 
         print()
         print(_c(header, BOLD, color, use_color=uc))
-        print(f"         Location    : line {vuln.line}, col {vuln.col}")
-        print(f"         Description :")
+        print(f"         Ubicación   : línea {vuln.line}, col {vuln.col}")
+        print(f"         Descripción :")
         print(f"           {_wrap(vuln.description, width=64, indent='           ')}")
         print()
-        print(f"         Recommendation:")
+        print(f"         Recomendación:")
         print(f"           {_wrap(vuln.recommendation, width=64, indent='           ')}")
         print(_c("  " + "-" * 70, DIM, use_color=uc))
 
     print()
-    print(_c("  Summary:", BOLD, use_color=uc))
+    print(_c("  Resumen:", BOLD, use_color=uc))
     for sev in ("CRITICAL", "HIGH", "MEDIUM", "LOW"):
         n = counts[sev]
         if n:
             color = SEVERITY_COLOR[sev]
-            print(f"    {_c(sev, color, use_color=uc)}: {n}")
+            label = SEVERITY_SUMMARY_LABEL[sev]
+            print(f"    {_c(label, color, use_color=uc)}: {n}")
     print(_c(bar, BOLD, use_color=uc))
     print()

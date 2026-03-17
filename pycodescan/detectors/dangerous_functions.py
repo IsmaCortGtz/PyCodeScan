@@ -13,50 +13,50 @@ DANGEROUS_BUILTINS: dict[str, dict] = {
     "eval": {
         "severity": "CRITICAL",
         "description": (
-            "eval() executes arbitrary Python code contained in a string. "
-            "If any user-controlled data reaches this call, it enables "
+            "eval() ejecuta código Python arbitrario contenido en una cadena. "
+            "Si datos controlados por usuario llegan a esta llamada, habilita "
             "Remote Code Execution (RCE)."
         ),
         "recommendation": (
-            "Remove eval() entirely. For parsing data literals use "
-            "ast.literal_eval(). Rewrite dynamic-dispatch logic using "
-            "explicit dictionaries or conditionals."
+            "Elimina eval() por completo. Para parsear literales usa "
+            "ast.literal_eval(). Reescribe la lógica dinámica con "
+            "diccionarios explícitos o condicionales."
         ),
     },
     "exec": {
         "severity": "CRITICAL",
         "description": (
-            "exec() executes a string as Python code at runtime. "
-            "Any user-supplied content reaching this call results in RCE."
+            "exec() ejecuta una cadena como código Python en tiempo de ejecución. "
+            "Cualquier contenido suministrado por usuario que llegue aquí provoca RCE."
         ),
         "recommendation": (
-            "Avoid exec(). Refactor the logic to use explicit code paths. "
-            "If a plugin system is required, use importlib with strict "
-            "allowlisting."
+            "Evita exec(). Refactoriza la lógica para usar rutas de código explícitas. "
+            "Si necesitas un sistema de plugins, usa importlib con allowlist "
+            "estricto."
         ),
     },
     "compile": {
         "severity": "HIGH",
         "description": (
-            "compile() converts a string into a code object that can later "
-            "be executed by eval() or exec(). Often used as a precursor to "
-            "arbitrary code execution."
+            "compile() convierte una cadena en un objeto de código que luego "
+            "puede ejecutarse con eval() o exec(). Suele ser un precursor de "
+            "ejecución arbitraria de código."
         ),
         "recommendation": (
-            "Avoid compile() with dynamic strings. Restrict its use to "
-            "fully static, trusted source (e.g., embedded scripts)."
+            "Evita compile() con cadenas dinámicas. Restringe su uso a "
+            "fuentes totalmente estáticas y confiables (p. ej., scripts embebidos)."
         ),
     },
     "__import__": {
         "severity": "HIGH",
         "description": (
-            "__import__() with a dynamic module name argument can be abused "
-            "to import arbitrary modules, enabling code execution or "
-            "information disclosure."
+            "__import__() con un nombre de módulo dinámico puede abusarse "
+            "para importar módulos arbitrarios, habilitando ejecución de código "
+            "o divulgación de información."
         ),
         "recommendation": (
-            "Use importlib.import_module() with strict allowlist validation "
-            "of the module name instead of __import__() with dynamic input."
+            "Usa importlib.import_module() con validación estricta por allowlist "
+            "del nombre del módulo, en lugar de __import__() con entrada dinámica."
         ),
     },
 }
@@ -69,79 +69,79 @@ DANGEROUS_ATTRIBUTES: dict[Tuple[str, str], dict] = {
     ("os", "system"): {
         "severity": "HIGH",
         "description": (
-            "os.system() passes a string directly to the system shell. "
-            "Inserting user-controlled data enables OS Command Injection."
+            "os.system() pasa una cadena directamente al shell del sistema. "
+            "Insertar datos controlados por usuario habilita OS Command Injection."
         ),
         "recommendation": (
-            "Replace with subprocess.run() using a list of arguments "
-            "and shell=False (the default). Validate all inputs."
+            "Reemplaza por subprocess.run() usando una lista de argumentos "
+            "y shell=False (valor por defecto). Valida todas las entradas."
         ),
     },
     ("os", "popen"): {
         "severity": "HIGH",
         "description": (
-            "os.popen() opens a pipe to a shell command. "
-            "User-controlled input in the command string leads to "
-            "Command Injection."
+            "os.popen() abre una tubería a un comando de shell. "
+            "La entrada controlada por usuario dentro de la cadena del comando "
+            "provoca Command Injection."
         ),
         "recommendation": (
-            "Replace with subprocess.run(..., stdout=PIPE) using an "
-            "argument list. Avoid shell=True."
+            "Reemplaza por subprocess.run(..., stdout=PIPE) usando una "
+            "lista de argumentos. Evita shell=True."
         ),
     },
     ("subprocess", "run"): {
         "severity": "MEDIUM",
         "description": (
-            "subprocess.run() can spawn shell commands. Passing shell=True "
-            "or concatenating user input into the command string is dangerous."
+            "subprocess.run() puede ejecutar comandos de shell. Pasar shell=True "
+            "o concatenar entrada de usuario en la cadena de comando es peligroso."
         ),
         "recommendation": (
-            "Pass the command as a list (e.g., ['ls', path]) instead of a "
-            "shell string. Keep shell=False and validate all arguments."
+            "Pasa el comando como lista (p. ej., ['ls', path]) en lugar de una "
+            "cadena de shell. Mantén shell=False y valida todos los argumentos."
         ),
     },
     ("subprocess", "call"): {
         "severity": "MEDIUM",
         "description": (
-            "subprocess.call() executes a command, with the same risks as "
-            "subprocess.run() when shell=True or with unsanitized input."
+            "subprocess.call() ejecuta un comando, con los mismos riesgos que "
+            "subprocess.run() cuando se usa shell=True o entrada no saneada."
         ),
         "recommendation": (
-            "Use argument lists and shell=False. Prefer subprocess.run() "
-            "which offers more control over input/output."
+            "Usa listas de argumentos y shell=False. Prefiere subprocess.run(), "
+            "que ofrece mayor control sobre entrada/salida."
         ),
     },
     ("subprocess", "Popen"): {
         "severity": "MEDIUM",
         "description": (
-            "subprocess.Popen() spawns a new process. Using shell=True or "
-            "building the command from user input enables Command Injection."
+            "subprocess.Popen() crea un proceso nuevo. Usar shell=True o "
+            "construir el comando con entrada de usuario habilita Command Injection."
         ),
         "recommendation": (
-            "Pass arguments as a list, set shell=False, and strictly "
-            "validate all user-provided values before use."
+            "Pasa argumentos como lista, define shell=False y valida de forma "
+            "estricta todos los valores proporcionados por el usuario antes de usarlos."
         ),
     },
     ("subprocess", "getoutput"): {
         "severity": "HIGH",
         "description": (
-            "subprocess.getoutput() passes a raw string to the shell and "
-            "returns its output. It is inherently vulnerable to "
-            "Command Injection via user input."
+            "subprocess.getoutput() pasa una cadena cruda al shell y "
+            "devuelve su salida. Es intrínsecamente vulnerable a "
+            "Command Injection por entrada de usuario."
         ),
         "recommendation": (
-            "Replace with subprocess.run(['cmd', arg], capture_output=True) "
-            "using an argument list. Avoid all shell-string APIs."
+            "Reemplaza por subprocess.run(['cmd', arg], capture_output=True) "
+            "usando una lista de argumentos. Evita todas las APIs con cadenas de shell."
         ),
     },
     ("subprocess", "getstatusoutput"): {
         "severity": "HIGH",
         "description": (
-            "subprocess.getstatusoutput() passes a raw string to the shell, "
-            "enabling Command Injection if any part is user-controlled."
+            "subprocess.getstatusoutput() pasa una cadena cruda al shell, "
+            "habilitando Command Injection si cualquier parte la controla el usuario."
         ),
         "recommendation": (
-            "Replace with subprocess.run() using an argument list and "
+            "Reemplaza por subprocess.run() usando una lista de argumentos y "
             "capture_output=True."
         ),
     },
@@ -149,135 +149,135 @@ DANGEROUS_ATTRIBUTES: dict[Tuple[str, str], dict] = {
     ("pickle", "loads"): {
         "severity": "CRITICAL",
         "description": (
-            "pickle.loads() deserializes arbitrary Python objects. "
-            "Deserializing data from an untrusted source leads to RCE "
-            "because pickle can invoke __reduce__ to execute code."
+            "pickle.loads() deserializa objetos Python arbitrarios. "
+            "Deserializar datos de una fuente no confiable conduce a RCE "
+            "porque pickle puede invocar __reduce__ para ejecutar código."
         ),
         "recommendation": (
-            "Never deserialize untrusted data with pickle. "
-            "Use JSON, MessagePack, or a schema-validated format. "
-            "If pickle is required, verify data integrity with an HMAC "
-            "before loading."
+            "Nunca deserialices datos no confiables con pickle. "
+            "Usa JSON, MessagePack o un formato validado por esquema. "
+            "Si pickle es obligatorio, verifica la integridad con un HMAC "
+            "antes de cargar."
         ),
     },
     ("pickle", "load"): {
         "severity": "CRITICAL",
         "description": (
-            "pickle.load() deserializes Python objects from a file. "
-            "A tampered or malicious file leads to arbitrary code execution."
+            "pickle.load() deserializa objetos Python desde un archivo. "
+            "Un archivo manipulado o malicioso conduce a ejecución arbitraria de código."
         ),
         "recommendation": (
-            "Do not use pickle with untrusted files. "
-            "Prefer JSON or another safe serialization format."
+            "No uses pickle con archivos no confiables. "
+            "Prefiere JSON u otro formato de serialización seguro."
         ),
     },
     ("marshal", "loads"): {
         "severity": "CRITICAL",
         "description": (
-            "marshal.loads() deserializes raw Python bytecode. "
-            "Malicious bytecode can execute arbitrary code."
+            "marshal.loads() deserializa bytecode Python crudo. "
+            "Bytecode malicioso puede ejecutar código arbitrario."
         ),
         "recommendation": (
-            "Avoid marshal.loads() with untrusted input. "
-            "Use JSON or another safe, structured format."
+            "Evita marshal.loads() con entradas no confiables. "
+            "Usa JSON u otro formato estructurado y seguro."
         ),
     },
     # -- Unsafe YAML --
     ("yaml", "load"): {
         "severity": "HIGH",
         "description": (
-            "yaml.load() without an explicit safe Loader deserializes "
-            "arbitrary Python objects, leading to RCE via specially "
-            "crafted YAML input."
+            "yaml.load() sin un Loader seguro explícito deserializa "
+            "objetos Python arbitrarios, provocando RCE mediante "
+            "entrada YAML especialmente construida."
         ),
         "recommendation": (
-            "Replace yaml.load(data) with yaml.safe_load(data), or pass "
-            "Loader=yaml.SafeLoader explicitly."
+            "Reemplaza yaml.load(data) por yaml.safe_load(data), o pasa "
+            "Loader=yaml.SafeLoader de forma explícita."
         ),
     },
     # -- Weak cryptography --
     ("hashlib", "md5"): {
         "severity": "MEDIUM",
         "description": (
-            "MD5 is a cryptographically broken hash function vulnerable "
-            "to collision attacks. It must not be used for password hashing, "
-            "digital signatures, or integrity verification."
+            "MD5 es una función hash criptográficamente rota y vulnerable "
+            "a ataques de colisión. No debe usarse para hash de contraseñas, "
+            "firmas digitales ni verificación de integridad."
         ),
         "recommendation": (
-            "Replace MD5 with SHA-256 (hashlib.sha256) or SHA-3. "
-            "For password hashing, use bcrypt, scrypt, or Argon2."
+            "Reemplaza MD5 por SHA-256 (hashlib.sha256) o SHA-3. "
+            "Para contraseñas usa bcrypt, scrypt o Argon2."
         ),
     },
     ("hashlib", "sha1"): {
         "severity": "MEDIUM",
         "description": (
-            "SHA-1 is cryptographically weak and should not be used for "
-            "security-sensitive operations such as certificate signing or "
-            "password hashing."
+            "SHA-1 es criptográficamente débil y no debe usarse en "
+            "operaciones sensibles de seguridad como firmado de certificados "
+            "o hash de contraseñas."
         ),
         "recommendation": (
-            "Replace SHA-1 with SHA-256 or stronger. "
-            "For passwords use bcrypt, scrypt, or Argon2."
+            "Reemplaza SHA-1 por SHA-256 o superior. "
+            "Para contraseñas usa bcrypt, scrypt o Argon2."
         ),
     },
     # -- Insecure randomness --
     ("random", "random"): {
         "severity": "LOW",
         "description": (
-            "random.random() uses a Mersenne Twister PRNG which is not "
-            "cryptographically secure. Its output can be predicted by "
-            "an attacker observing enough values."
+            "random.random() usa un PRNG Mersenne Twister que no es "
+            "criptográficamente seguro. Su salida puede predecirse si "
+            "un atacante observa suficientes valores."
         ),
         "recommendation": (
-            "Use the secrets module for security-sensitive random values "
-            "(tokens, session IDs, nonces)."
+            "Usa el módulo secrets para valores aleatorios sensibles de seguridad "
+            "(tokens, IDs de sesión, nonces)."
         ),
     },
     ("random", "randint"): {
         "severity": "LOW",
         "description": (
-            "random.randint() is not cryptographically secure and "
-            "should not be used to generate tokens, OTPs, or secret keys."
+            "random.randint() no es criptográficamente seguro y "
+            "no debe usarse para generar tokens, OTPs ni claves secretas."
         ),
         "recommendation": (
-            "Replace with secrets.randbelow() or secrets.token_bytes() "
-            "for any security-sensitive purpose."
+            "Reemplaza por secrets.randbelow() o secrets.token_bytes() "
+            "para cualquier propósito sensible de seguridad."
         ),
     },
     ("random", "choice"): {
         "severity": "LOW",
         "description": (
-            "random.choice() uses a non-cryptographic PRNG. "
-            "Predictable output makes it unsuitable for security use cases."
+            "random.choice() usa un PRNG no criptográfico. "
+            "La salida predecible lo hace inadecuado para casos de seguridad."
         ),
         "recommendation": (
-            "Use secrets.choice() from the secrets module when the "
-            "selected value has security implications."
+            "Usa secrets.choice() del módulo secrets cuando "
+            "el valor elegido tenga implicaciones de seguridad."
         ),
     },
     # -- TOCTOU / insecure temp files --
     ("tempfile", "mktemp"): {
         "severity": "MEDIUM",
         "description": (
-            "tempfile.mktemp() returns a filename without creating the file, "
-            "introducing a TOCTOU race condition. An attacker can create a "
-            "symlink at the returned path before your code opens it."
+            "tempfile.mktemp() devuelve un nombre de archivo sin crearlo, "
+            "introduciendo una condición de carrera TOCTOU. Un atacante puede crear "
+            "un symlink en esa ruta antes de que tu código lo abra."
         ),
         "recommendation": (
-            "Replace with tempfile.mkstemp() or tempfile.NamedTemporaryFile() "
-            "which atomically create and open the file."
+            "Reemplaza por tempfile.mkstemp() o tempfile.NamedTemporaryFile(), "
+            "que crean y abren el archivo de forma atómica."
         ),
     },
     # -- Shelve (uses pickle internally) --
     ("shelve", "open"): {
         "severity": "LOW",
         "description": (
-            "shelve.open() uses pickle internally for serialization. "
-            "Opening a shelve database from an untrusted source is dangerous."
+            "shelve.open() usa pickle internamente para serializar. "
+            "Abrir una base shelve desde una fuente no confiable es peligroso."
         ),
         "recommendation": (
-            "Do not open shelve databases from untrusted sources. "
-            "Consider SQLite with parameterized queries as a safer alternative."
+            "No abras bases shelve desde fuentes no confiables. "
+            "Considera SQLite con consultas parametrizadas como alternativa más segura."
         ),
     },
 }
@@ -311,7 +311,7 @@ class DangerousFunctionsDetector(BaseDetector):
                 info = DANGEROUS_BUILTINS.get(func_name)
                 if info:
                     vulns.append(Vulnerability(
-                        name=f"Dangerous Function: {func_name}()",
+                        name=f"Función peligrosa: {func_name}()",
                         description=info["description"],
                         line=node.lineno,
                         col=node.col_offset,
@@ -322,7 +322,7 @@ class DangerousFunctionsDetector(BaseDetector):
                 info = DANGEROUS_ATTRIBUTES.get((module, func_name))
                 if info:
                     vulns.append(Vulnerability(
-                        name=f"Dangerous Function: {module}.{func_name}()",
+                        name=f"Función peligrosa: {module}.{func_name}()",
                         description=info["description"],
                         line=node.lineno,
                         col=node.col_offset,

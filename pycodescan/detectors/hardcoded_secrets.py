@@ -21,11 +21,11 @@ SECRET_KEYWORDS = [
 ]
 
 RECOMMENDATION = (
-    "Never hardcode secrets in source code. "
-    "Load sensitive values from environment variables (os.environ.get) or a "
-    "secrets manager (e.g., HashiCorp Vault, AWS Secrets Manager, .env files "
-    "excluded from version control). "
-    "Rotate any exposed credentials immediately and audit commit history."
+    "Nunca hardcodees secretos en el código fuente. "
+    "Carga valores sensibles desde variables de entorno (os.environ.get) o un "
+    "gestor de secretos (p. ej., HashiCorp Vault, AWS Secrets Manager, archivos "
+    ".env excluidos del control de versiones). "
+    "Rota de inmediato cualquier credencial expuesta y audita el historial de commits."
 )
 
 
@@ -63,10 +63,10 @@ class HardcodedSecretsDetector(BaseDetector):
                     if isinstance(target, ast.Name) and _matches_keyword(target.id):
                         if _is_non_empty_string(node.value):
                             vulns.append(Vulnerability(
-                                name="Hardcoded Secret",
+                                name="Secreto hardcoded",
                                 description=(
-                                    f"Variable '{target.id}' contains a hardcoded "
-                                    f"secret value: {_redact(node.value.value)}"
+                                    f"La variable '{target.id}' contiene un valor "
+                                    f"secreto hardcoded: {_redact(node.value.value)}"
                                 ),
                                 line=node.lineno,
                                 col=node.col_offset,
@@ -83,10 +83,10 @@ class HardcodedSecretsDetector(BaseDetector):
                     and _is_non_empty_string(node.value)
                 ):
                     vulns.append(Vulnerability(
-                        name="Hardcoded Secret",
+                        name="Secreto hardcoded",
                         description=(
-                            f"Variable '{node.target.id}' contains a hardcoded "
-                            f"secret value: {_redact(node.value.value)}"
+                            f"La variable '{node.target.id}' contiene un valor "
+                            f"secreto hardcoded: {_redact(node.value.value)}"
                         ),
                         line=node.lineno,
                         col=node.col_offset,
@@ -99,10 +99,10 @@ class HardcodedSecretsDetector(BaseDetector):
                 for kw in node.keywords:
                     if kw.arg and _matches_keyword(kw.arg) and _is_non_empty_string(kw.value):
                         vulns.append(Vulnerability(
-                            name="Hardcoded Secret in Function Call",
+                            name="Secreto hardcoded en llamada de función",
                             description=(
-                                f"Keyword argument '{kw.arg}' contains a hardcoded "
-                                f"secret value: {_redact(kw.value.value)}"
+                                f"El argumento con nombre '{kw.arg}' contiene un valor "
+                                f"secreto hardcoded: {_redact(kw.value.value)}"
                             ),
                             line=kw.value.lineno,
                             col=kw.value.col_offset,

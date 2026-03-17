@@ -21,15 +21,15 @@ class Analyzer:
         path = Path(filepath)
 
         if not path.exists():
-            raise FileNotFoundError(f"File not found: {filepath}")
+            raise FileNotFoundError(f"Archivo no encontrado: {filepath}")
         if path.suffix != ".py":
-            raise ValueError(f"Not a Python source file: {filepath}")
+            raise ValueError(f"No es un archivo fuente Python: {filepath}")
 
         source = path.read_text(encoding="utf-8")
         try:
             tree = ast.parse(source, filename=str(path))
         except SyntaxError as exc:
-            raise SyntaxError(f"Could not parse {filepath}: {exc}") from exc
+            raise SyntaxError(f"No se pudo parsear {filepath}: {exc}") from exc
 
         source_lines = source.splitlines()
         vulns: List[Vulnerability] = []

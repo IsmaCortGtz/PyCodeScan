@@ -13,12 +13,12 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="pycodescan",
         description=(
-            "Analyze Python source files for common security vulnerabilities "
-            "using AST — no external dependencies required."
+            "Analiza archivos fuente Python en busca de vulnerabilidades de "
+            "seguridad comunes usando AST — sin dependencias externas."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
-            "Examples:\n"
+            "Ejemplos:\n"
             "  pycodescan script.py\n"
             "  pycodescan app.py utils.py --no-color\n"
             "  pycodescan examples/insecure_web_app.py\n"
@@ -28,13 +28,13 @@ def _build_parser() -> argparse.ArgumentParser:
         "files",
         nargs="+",
         metavar="FILE",
-        help="Python file(s) to analyze.",
+        help="Archivo(s) Python a analizar.",
     )
     parser.add_argument(
         "--no-color",
         action="store_true",
         default=False,
-        help="Disable ANSI color output.",
+        help="Desactiva la salida con colores ANSI.",
     )
     return parser
 
@@ -60,7 +60,7 @@ def main() -> None:
             print(f"[error] {exc}", file=sys.stderr)
             exit_code = 2
         except Exception as exc:  # noqa: BLE001
-            print(f"[error] Unexpected failure on {filepath}: {exc}", file=sys.stderr)
+            print(f"[error] Falla inesperada en {filepath}: {exc}", file=sys.stderr)
             exit_code = 2
 
     sys.exit(exit_code)
